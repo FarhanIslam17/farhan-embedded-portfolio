@@ -1,0 +1,6 @@
+import { chromium } from 'playwright';
+const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/google-chrome-stable',args:['--no-sandbox','--enable-webgl','--use-gl=angle','--use-angle=swiftshader']});
+for(let cfg of [{width:1280,height:800},{width:390,height:844}]){
+ const page=await browser.newPage({viewport:cfg,deviceScaleFactor:1});let errors=[];page.on('pageerror',e=>errors.push(e.stack));await page.goto('http://localhost:4173');await page.waitForTimeout(1400);await page.screenshot({path:`/downloads/farhan-round2-hero-${cfg.width}.png`});
+ const exp=page.locator('.experience');await exp.evaluate(el=>el.scrollTop=(el.scrollHeight-el.clientHeight)*.57);await page.waitForTimeout(2200);await page.screenshot({path:`/downloads/farhan-round2-ctrl-${cfg.width}.png`});await exp.evaluate(el=>el.scrollTop=(el.scrollHeight-el.clientHeight)*.655);await page.waitForTimeout(2200);await page.screenshot({path:`/downloads/farhan-round2-sens-${cfg.width}.png`});await exp.evaluate(el=>el.scrollTop=(el.scrollHeight-el.clientHeight)*.70);await page.waitForTimeout(2200);await page.screenshot({path:`/downloads/farhan-round2-daq-${cfg.width}.png`});console.log(cfg.width,await page.locator('h1').innerText(),errors);await page.close();
+}await browser.close();
